@@ -4,6 +4,7 @@
  * [기능](#functionality)
  * [사용 방법](#how_to_use)
  * [빌드 방법](#how_to_build)
+ * [사용한 라이브러리](#library)
 
 <br>
 
@@ -65,3 +66,12 @@ Base 64 이미지 태그로 변환시켜주는 기능만 추가해서 만들려�
 단순하게 JJangdoImageUtil.sln 솔루션 파일을 실행해서 F5를 눌러서 빌드하면 댐  
 
 ![5](Document/Images/VSInstaller.png)
+
+<br>  
+
+ 
+### <a name="library"/>사용한 라이브러리
+ - [Material Theme Design](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
+ - [WindowDisplayAPI](https://github.com/falahati/WindowsDisplayAPI)
+ - [MoreLinq](https://github.com/morelinq/MoreLINQ)
+ - [SixLabors ImageSharp](https://github.com/SixLabors/ImageSharp)
