@@ -1,4 +1,6 @@
-﻿
+﻿// 작성자 : 윤정도
+// 이미지 포맷에 대한 확장기능
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

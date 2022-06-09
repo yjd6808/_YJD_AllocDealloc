@@ -1,4 +1,7 @@
-﻿using SixLabors.ImageSharp.PixelFormats;
+﻿// 작성자 : 윤정도
+// ICO 형식을 다룸
+
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;

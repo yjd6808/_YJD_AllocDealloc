@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// 직접적으로 이미지 변환 기능을 수행해줌
+
+using System;
 using System.Runtime.InteropServices;
 
 using SixLabors.ImageSharp;
@@ -20,7 +23,7 @@ namespace JJangdoImageUtil
 
     public partial class ImageConverter
     {
-        private readonly static ImageFormatManager ImageFormatManager = Configuration.Default.ImageFormatsManager;
+        private static readonly ImageFormatManager ImageFormatManager = Configuration.Default.ImageFormatsManager;
 
         public static IImageEncoder FindEncoder(IImageFormat imageFormat)
         {

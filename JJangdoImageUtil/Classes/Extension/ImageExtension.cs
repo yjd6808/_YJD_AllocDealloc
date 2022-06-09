@@ -1,4 +1,6 @@
-﻿using SixLabors.ImageSharp;
+﻿// @기반 소스 : https://gist.github.com/vurdalakov/00d9471356da94454b372843067af24e
+
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
@@ -17,7 +19,7 @@ namespace JJangdoImageUtil
     using Icon = System.Drawing.Icon;
     using Bitmap = System.Drawing.Bitmap;
 
-    // @기반 소스 : https://gist.github.com/vurdalakov/00d9471356da94454b372843067af24e
+    
     public static class ImageExtension
     {
         public static Bitmap ToBitmap<TPixel>(this Image<TPixel> image) where TPixel : unmanaged, IPixel<TPixel>

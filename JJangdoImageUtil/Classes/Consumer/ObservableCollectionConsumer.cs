@@ -1,4 +1,8 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// ObservableCollection 자료구조의 작업 처리를 비동기적으로 실행하기 위한 쓰레드
+// ObservableJob이 들어오면 동기화 큐에서 꺼내서 작업을 수행하여 ObservableCollection에 반영해준다.
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// SixLabors에서 제공해주는 이미지 포맷처리만 진행하는 클래스
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

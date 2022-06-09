@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// 이미지 처리 관련 작업을 생성해주는 팩토리
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;

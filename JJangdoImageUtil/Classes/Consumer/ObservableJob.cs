@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// ObservableCollection에 대해서 수행해야하는 작업의 기본 단위
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

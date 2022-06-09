@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// 이미지 포맷을 색상형태로 변환해주는 컨버터
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;

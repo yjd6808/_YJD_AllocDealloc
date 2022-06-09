@@ -24,7 +24,7 @@ namespace JJangdoImageUtil
         {
             InitializeComponent();
 
-            WindowUtility.MoveToCenterFromBase(Application.Current.MainWindow, this);
+            WindowUtility.MoveToCenterFromBase(App.Window, this);
         }
 
         private void Button_Close_Click(object sender, RoutedEventArgs e)

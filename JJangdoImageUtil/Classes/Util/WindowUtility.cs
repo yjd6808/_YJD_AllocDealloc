@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// 윈도우 관련 처리
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +38,7 @@ namespace JJangdoImageUtil
                 window.Top + +window.Height / 2);
         }
 
+        // window 기준으로 가장 가까운 디스플레이 바운드를 반환한다.
         public static Rect ClosestDisplayRect(Window window)
         {
             List<Rect> rectList = DisplayUtility.GetDisplayRectList();

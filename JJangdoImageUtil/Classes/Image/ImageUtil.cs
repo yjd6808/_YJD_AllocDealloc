@@ -1,6 +1,5 @@
 ﻿// 작성자 : 윤정도
-// 
-// 이미지 관련 다루는 전체적인 기능 제공
+// 이미지 관련 부가기능
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;

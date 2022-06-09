@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 작성자 : 윤정도
+// 모든 이미지 포맷을 다루는 상위 클래스
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
