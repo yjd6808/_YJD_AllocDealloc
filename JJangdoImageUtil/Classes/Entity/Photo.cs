@@ -98,9 +98,7 @@ namespace JJangdoImageUtil
         public Image BindedControl => _imgControl;
 
 
-        // 첫번째 {} => 확장자명에서 .png -> png로 
-        // 두번째 {} => Base64 문자열 넣어줌
-        public string Base64ImgTagString => string.Format($"<img src=\"data:image/{_sourceImage.Format.ToExtensionString().Remove(0, 1)};base64,{Base64String}\"/>");
+        public string Base64ImgTagString => string.Format($"<img src=\"{Base64String}\"/>");
 
 
         public override string ToString() => _source.ToString();

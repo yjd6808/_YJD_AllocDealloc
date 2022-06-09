@@ -209,7 +209,7 @@ namespace JJangdoImageUtil
         // @Icon To Base64 참고 : https://stackoverflow.com/questions/42038872/how-to-convert-icon-into-a-base64-string
         public override string ToBase64String()
         {
-            return Convert.ToBase64String(_stream.ToArray());
+            return "data:image/ico;base64," + Convert.ToBase64String(_stream.ToArray());
         }
 
         public override void SaveToFile(string path)
