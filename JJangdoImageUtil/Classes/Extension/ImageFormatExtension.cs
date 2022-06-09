@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Media;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Jpeg;
@@ -31,6 +31,21 @@ namespace JJangdoImageUtil
             }
         }
 
+        public static string ToExtensionString(this ImageFormat imageFormat)
+        {
+            switch (imageFormat)
+            {
+                case ImageFormat.Jpeg: return ".jpg";
+                case ImageFormat.Gif: return ".gif";
+                case ImageFormat.Bmp: return ".bmp";
+                case ImageFormat.Png: return ".png";
+                case ImageFormat.Tiff: return ".tiff";
+                case ImageFormat.Webp: return ".webp";
+                case ImageFormat.Ico: return ".ico";
+                default: return null;
+            }
+        }
+
         public static ImageFormat ToFormat(this IImageFormat imageFormat)
         {
             if (imageFormat is JpegFormat)
@@ -48,5 +63,23 @@ namespace JJangdoImageUtil
 
             return ImageFormat.Unknown;
         }
+
+
+        // @색상 리스트 : https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.colors?view=windowsdesktop-6.0
+        public static Brush ToBrush(this ImageFormat imageFormat)
+        {
+            switch (imageFormat)
+            {
+                case ImageFormat.Jpeg: return Brushes.DarkKhaki;
+                case ImageFormat.Gif: return Brushes.LightCoral;
+                case ImageFormat.Bmp: return Brushes.HotPink;
+                case ImageFormat.Png: return Brushes.SeaGreen;
+                case ImageFormat.Tiff: return Brushes.MediumAquamarine;
+                case ImageFormat.Webp: return Brushes.DeepSkyBlue;
+                case ImageFormat.Ico: return Brushes.Gray;
+                default: return Brushes.Black;
+            }
+        }
+
     }
 }

@@ -10,7 +10,7 @@ namespace JJangdoImageUtil
     {
         protected List<Func<T>> _funcs;
 
-        protected ObservableJobCreate(string jobName, List<Func<T>> funcs, Type type) : base(jobName, type)
+        protected ObservableJobCreate(int id, List<Func<T>> funcs, Type type) : base(id, type)
         {
             _funcs = funcs;
             _totalTargetCount = funcs.Count;

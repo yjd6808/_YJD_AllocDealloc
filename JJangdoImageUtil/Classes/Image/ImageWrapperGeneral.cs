@@ -22,7 +22,8 @@ namespace JJangdoImageUtil
 {
     public class ImageWrapperGeneral : ImageWrapper
     {
-        public Image SourceImage { get; set; }
+        public Image _sourceImage;
+        public Image SourceImage => _sourceImage;
 
 
         public ImageWrapperGeneral()
@@ -38,68 +39,60 @@ namespace JJangdoImageUtil
             _stream = new MemoryStream();
             _format = ImageFormat.Png;
 
-            SourceImage = iconWrapper.IconBitmap.ToImageSharpImage(_stream);
+            _sourceImage = iconWrapper.IconBitmap.ToImageSharpImage(_stream);
         }
 
         protected override void Initialize(string path)
         {
             _stream = new MemoryStream();
-            SourceImage = Image.Load(path, out var imageFormat);
-            SourceImage.Save(Stream, ImageConverter.FindEncoder(imageFormat));
+            _sourceImage = Image.Load(path, out var imageFormat);
+            _sourceImage.Save(Stream, ImageConverter.FindEncoder(imageFormat));
             _format = imageFormat.ToFormat();
+        }
+
+        public override int GetWidth()
+        {
+            return _sourceImage.Width;
+        }
+
+        public override int GetHeight()
+        {
+            return _sourceImage.Height;
         }
 
         public override ImageWrapper ToGif()
         {
-            if (_format == ImageFormat.Gif)
-                return this;
-
-            SourceImage = ImageConverter.ConvertToGif(SourceImage, _stream);
+            _sourceImage = ImageConverter.ConvertToGif(_sourceImage, _stream, out _format);
             return this;
         }
 
         public override ImageWrapper ToJpeg()
         {
-            if (_format == ImageFormat.Jpeg)
-                return this;
-
-            SourceImage = ImageConverter.ConvertToJpeg(SourceImage, _stream);
+            _sourceImage = ImageConverter.ConvertToJpeg(_sourceImage, _stream, out _format);
             return this;
         }
 
         public override ImageWrapper ToPng()
         {
-            if (_format == ImageFormat.Png)
-                return this;
-
-            SourceImage = ImageConverter.ConvertToPng(SourceImage, _stream);
+            _sourceImage = ImageConverter.ConvertToPng(_sourceImage, _stream, out _format);
             return this;
         }
 
         public override ImageWrapper ToTiff()
         {
-            if (_format == ImageFormat.Tiff)
-                return this;
-
-            SourceImage = ImageConverter.ConvertToTiff(SourceImage, _stream);
+            _sourceImage = ImageConverter.ConvertToTiff(_sourceImage, _stream, out _format);
             return this;
         }
 
         public override ImageWrapper ToWebp()
         {
-            if (_format == ImageFormat.Webp)
-                return this;
-
-            SourceImage = ImageConverter.ConvertToWebp(SourceImage, _stream);
+            _sourceImage = ImageConverter.ConvertToWebp(_sourceImage, _stream, out _format);
             return this;
         }
 
         public override ImageWrapper ToBmp()
         {
-            if (_format == ImageFormat.Bmp)
-                return this;
-
-            SourceImage = ImageConverter.ConvertToBmp(SourceImage, _stream);
+            _sourceImage = ImageConverter.ConvertToBmp(_sourceImage, _stream, out _format);
             return this;
         }
 
@@ -108,15 +101,132 @@ namespace JJangdoImageUtil
             return new ImageWrapperIcon(this);
         }
 
+        public override void RotateClockWise()
+        {
+            _stream.Reset();
+            _sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate90));
+            _sourceImage.Save(_stream, _format.ToFormat());
+            _stream.Position = 0;
+
+            //switch (_format)
+            //{
+            //    case ImageFormat.Gif:
+            //    case ImageFormat.Jpeg:
+            //    case ImageFormat.Png:
+            //    case ImageFormat.Webp:
+            //    case ImageFormat.Bmp:
+            //    case ImageFormat.Ico:
+            //    case ImageFormat.Tiff:
+                    
+            //        break;
+            //    case ImageFormat.Unknown:
+            //    {
+            //        ToPng();
+            //        RotateClockWise();
+            //        ToTiff();
+            //        break;
+            //    }
+            //}
+        }
+
+        public override void RotateCounterClockWise()
+        {
+            _stream.Reset();
+            _sourceImage.Mutate(x => x.Rotate(-90.0f));
+            _sourceImage.Save(_stream, _format.ToFormat());
+            _stream.Position = 0;
+        }
+
+
+       
+
         public override void SaveToFile(string path)
         {
-            SourceImage.Save(path);
+            _sourceImage.Save(path);
         }
 
         public override string ToBase64String()
         {
             IImageFormat format = _format.ToFormat();
-            return SourceImage.ToBase64String(format);
+            return _sourceImage.ToBase64String(format);
+        }
+
+        public override void SetScale(float scaleX, float scaleY, bool keepAspectRatio)
+        {
+            SetSize((int)(_sourceImage.Width * scaleX), (int)(_sourceImage.Height * scaleY), keepAspectRatio);
+        }
+
+        public override void SetSize(int width, int height, bool keepAspectRatio)
+        {
+            if (keepAspectRatio)
+            {
+                int sourceImgWidth = _sourceImage.Width;
+                int sourceImgHeight = _sourceImage.Height;
+
+                // 생각1.
+                // ex) 기존 이미지 가로 길이 : 400
+                //     기존 이미지 세로 길이 : 300
+                //     변경 이미지 가로 길이 : 500
+                //     변경 이미지 세로 길이 : 300
+                //     
+                //     originalRatio = 400 / 300
+                //     destinationRatio = 500 / 300
+                //
+                //     detinationRatio > originalRatio 이므로
+                //     가로길이가 더 길어진 상태이다.
+                //     세로 길이를 높여줘서 크기를 맞춰준다.
+                //     x / height = originalRatio
+                //     x = width / originalRatio 
+                // float originalRatio = (float)(_sourceImage.Width) / _sourceImage.Height;
+                // float destinationRatio = (float)(width) / height;
+
+
+                // 생각2.
+                // 변화량이 더 큰 쪽기준으로 크기를 결정하도록 한다. 
+                // 너비 변화량, 높이 변화량
+                float widthRatio = (float)(width - sourceImgWidth) / sourceImgWidth;
+                float heightRatio = (float)(height - sourceImgHeight) / sourceImgHeight;
+
+                float absWidthRatio = Math.Abs(widthRatio);
+                float absHeightRatio = Math.Abs(heightRatio);
+
+                if (absWidthRatio > absHeightRatio)
+                {
+                    sourceImgHeight += (int)(sourceImgHeight * widthRatio);
+                    height = sourceImgHeight;
+                }
+                else
+                {
+                    sourceImgWidth += (int)(sourceImgWidth * heightRatio);
+                    width = sourceImgWidth;
+                }
+            }
+
+            _stream.Reset();
+            _sourceImage.Mutate(x => x.Resize(width, height));
+            _sourceImage.Save(_stream, _format.ToFormat());
+            _stream.Position = 0;
+        }
+
+        public override void SetWidth(int width, bool keepAspectRatio)
+        {
+            SetSize(width, _sourceImage.Height, keepAspectRatio);
+        }
+
+        public override void SetHeight(int height, bool keepAspectRatio)
+        {
+            SetSize(_sourceImage.Width, height, keepAspectRatio);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _sourceImage?.Dispose();
+                _sourceImage = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

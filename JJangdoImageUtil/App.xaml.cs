@@ -8,10 +8,10 @@ using System.Windows;
 
 namespace JJangdoImageUtil
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        public static MainWindow Window;
+        public static ImageDisplayWindow ImageDisplayWindow;
+        public static InformationWindow InformationWindow;
     }
 }

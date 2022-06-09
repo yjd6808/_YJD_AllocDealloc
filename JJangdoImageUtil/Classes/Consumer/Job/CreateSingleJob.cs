@@ -8,7 +8,7 @@ namespace JJangdoImageUtil
 {
     public class CreateSingleJob<T> : ObservableJobCreate<T> where T : class
     {
-        public CreateSingleJob(string jobName, List<Func<T>> funcs) : base(jobName, funcs, Type.CreateSingleJob)
+        public CreateSingleJob(int id, List<Func<T>> funcs) : base(id, funcs, Type.CreateSingleJob)
         {
         }
     }

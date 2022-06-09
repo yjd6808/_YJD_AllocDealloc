@@ -12,9 +12,12 @@
 			    <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
 			    <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
 
+                <!-- 확장 테마 -->
+
                 <!-- 내가 만든 스타일 -->
                 <ResourceDictionary Source="pack://application:,,,/Resources/Styles/Button.xaml"/>
-		    </ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/Styles/TextBox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 	    </ResourceDictionary>
     </Application.Resources>
 </Application>

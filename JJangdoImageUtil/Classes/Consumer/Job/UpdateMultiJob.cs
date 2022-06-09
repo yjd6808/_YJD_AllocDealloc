@@ -11,7 +11,7 @@ namespace JJangdoImageUtil
     {
         private readonly AutoResetEvent _waitHandle;
 
-        public UpdateMultiJob(string jobName, Action<T> action) : base(jobName, action, Type.UpdateMultiJob)
+        public UpdateMultiJob(int id, Action<T> action) : base(id, action, Type.UpdateMultiJob)
         {
             _waitHandle = new AutoResetEvent(false);
         }

@@ -4,7 +4,7 @@ namespace JJangdoImageUtil
 {
     public class UpdateSingleJob<T> : ObservableJobUpdate<T> where T : class
     {
-        public UpdateSingleJob(string jobName, Action<T> action) : base(jobName, action, Type.UpdateSingleJob)
+        public UpdateSingleJob(int id, Action<T> action) : base(id, action, Type.UpdateSingleJob)
         {
         }
     }

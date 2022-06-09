@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace JJangdoImageUtil
 {
-    public class Constant
+    public enum ImageRotate
     {
-        public static readonly int TRUE = 1;
-        public static readonly int FALSE = 0;
+        ClockWise,
+        CounterClockWise
     }
 }

@@ -15,15 +15,6 @@ namespace JJangdoImageUtil
     {
         public Dispatcher Dispatcher { get; set; }
 
-        public PhotoCollection()
-        {
-        }
-
-        public PhotoCollection(Dispatcher dispatcher)
-        {
-            Dispatcher = dispatcher;
-        }
-
         public void Add(string imagePath)
         {
             ImageFormat imageFormat = ImageUtil.DetectImageFormat(new FileInfo(imagePath));

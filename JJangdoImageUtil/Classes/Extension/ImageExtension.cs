@@ -78,12 +78,6 @@ namespace JJangdoImageUtil
             return Image.Load(stream);
         }
 
-        public static Icon ToIcon(this Bitmap bitmap)
-        {
-            IntPtr hIcon = bitmap.GetHbitmap();
-            Icon icon = Icon.FromHandle(hIcon);
-            ImageConverter.DestroyIcon(hIcon);
-            return icon;
-        }
+      
     }
 }

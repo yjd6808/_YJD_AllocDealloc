@@ -41,6 +41,8 @@ namespace JJangdoImageUtil
         }
 
 
+        // 파일의 헤더를 읽어서 이미지 파일여부를 확실하게 검사
+        // 보통 확장자로 검사하는데 좀 더 안정적인 이미지 로딩을 위해서 이렇게 했다.
         public static ImageFormat DetectImageFormat(FileInfo fileInfo)
         {
             IImageFormat detectedFormat = Image.DetectFormat(fileInfo.FullName);

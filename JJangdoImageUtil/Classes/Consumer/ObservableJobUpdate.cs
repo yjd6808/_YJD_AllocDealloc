@@ -10,7 +10,7 @@ namespace JJangdoImageUtil
     {
         protected Action<T> _action;
 
-        protected ObservableJobUpdate(string jobName, Action<T> action, Type type) : base(jobName, type)
+        protected ObservableJobUpdate(int id, Action<T> action, Type type) : base(id, type)
         {
             _action = action;
         }

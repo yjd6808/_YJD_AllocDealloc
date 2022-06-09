@@ -13,4 +13,5 @@ namespace JJangdoImageUtil
         Ico,
         Unknown
     }
+
 }

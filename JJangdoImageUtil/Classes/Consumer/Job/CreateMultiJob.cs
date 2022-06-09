@@ -11,7 +11,7 @@ namespace JJangdoImageUtil
     {
         private readonly AutoResetEvent _waitHandle;
 
-        public CreateMultiJob(string jobName, List<Func<T>> funcs) : base(jobName, funcs, Type.CreateMultiJob)
+        public CreateMultiJob(int id, List<Func<T>> funcs) : base(id, funcs, Type.CreateMultiJob)
         {
             _waitHandle = new AutoResetEvent(false);
         }

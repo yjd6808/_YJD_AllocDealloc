@@ -7,13 +7,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JJangdoImageUtil"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-		xmlns:spiciyTaco="http://schemas.spicytaco.io/"
+        xmlns:spiciyTaco="http://schemas.spicytaco.io/"
         mc:Ignorable="d"
-        Title="JJangdo Image" 
-		MinHeight="250"
-        Height="560" 
-		MinWidth="800"
-        Width="800" 
+        Title="JJangdo Image"
+        MinHeight="250"
+        Height="610"
+        MinWidth="800"
+        Width="800"
         x:Name="_window"
         MouseDown="_window_MouseDown"
         ResizeMode="CanResizeWithGrip"
@@ -22,291 +22,770 @@
         AllowsTransparency="True">
     <Window.Resources>
 
-       
+        <local:PhotoFormatConverter x:Key="PhotoFormatConverter" />
+        <local:PhotoSizeConverter x:Key="PhotoSizeConverter" />
 
         <!-- @사진첩 참고 : https://github.com/microsoft/WPF-Samples/tree/master/Sample%20Applications/PhotoViewerDemo-->
-	    <!-- Photo 데이터 템플릿 -->
-	    <DataTemplate DataType="{x:Type local:Photo}">
+        <!-- Photo 데이터 템플릿 -->
+        <DataTemplate DataType="{x:Type local:Photo}">
             <ContentControl Loaded="_photoListBox_OnLoaded">
-	            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="6">
+                <Grid VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Margin="6">
 
-		            <!-- 그림자 효과 -->
-		            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="4"
-		                    Background="#44000000">
-			            <Border.RenderTransform>
-				            <TranslateTransform X="5" Y="5" />
-			            </Border.RenderTransform>
-			            <Border.BitmapEffect>
-				            <BlurBitmapEffect Radius="8" />
-			            </Border.BitmapEffect>
-		            </Border>
-		            <!-- 이미지 템플릿 -->
-		            <Border Padding="4" Background="White" BorderBrush="#22000000" BorderThickness="1">
-			            <StackPanel Orientation="Vertical">
-				            <Image>
-					            <Image.Source>
-						            <BitmapImage DecodePixelWidth="200"
-												 x:Name="_photoImageControl"
-						                         RenderOptions.BitmapScalingMode="LowQuality"
-						                         UriSource="{Binding Source}">
-						            </BitmapImage>
-					            </Image.Source>
-				            </Image>
-			            </StackPanel>
-		            </Border>
-	            </Grid>
+                    <!-- 그림자 효과 -->
+                    <Border HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            CornerRadius="4"
+                            Background="#44000000">
+                        <Border.RenderTransform>
+                            <TranslateTransform X="5"
+                                                Y="5" />
+                        </Border.RenderTransform>
+                        <Border.BitmapEffect>
+                            <BlurBitmapEffect Radius="8" />
+                        </Border.BitmapEffect>
+                    </Border>
+
+                    <!-- 이미지 템플릿 -->
+                    <Border Padding="4"
+                            Background="White"
+                            BorderBrush="#22000000"
+                            BorderThickness="1">
+                        <StackPanel>
+                            <Image Stretch="Uniform">
+                                <Image.Source>
+                                    <BitmapImage x:Name="_photoImageControl"
+                                                 UriSource="{Binding Source}">
+
+                                        <!--DecodePixelWidth="200"-->
+                                        <!--RenderOptions.BitmapScalingMode="LowQuality"-->
+                                    </BitmapImage>
+                                </Image.Source>
+                            </Image>
+
+                            <TextBlock Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"
+                                       Foreground="Black" />
+                            <TextBlock HorizontalAlignment="Left"
+                                       Foreground="Black"
+                                       Text="{Binding SourceImage.Size, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource PhotoSizeConverter}}">
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Background="{Binding SourceImage.Format, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource PhotoFormatConverter}}"
+                                Width="50">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding SourceImage.Format, UpdateSourceTrigger=PropertyChanged}">
+                        </TextBlock>
+                        <Separator></Separator>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding UniqueId}"></TextBlock>
+                    </StackPanel>
+                </Grid>
             </ContentControl>
-		    
-	    </DataTemplate>
 
-	    <!-- 포토 리스트박스 스타일 -->
-	    <Style TargetType="{x:Type ListBox}" x:Key="PhotoListBoxStyle">
-		    <Setter Property="Foreground" Value="White" />
-		    <Setter Property="Template">
-			    <Setter.Value>
-				    <ControlTemplate TargetType="{x:Type ListBox}">
-					    <WrapPanel Margin="5" IsItemsHost="True" Orientation="Horizontal"
-					               ItemHeight="{Binding ElementName=_zoomSlider, Path='Value'}"
-					               ItemWidth="{Binding ElementName=_zoomSlider, Path='Value'}"
-					               VerticalAlignment="Top" HorizontalAlignment="Stretch" />
-				    </ControlTemplate>
-			    </Setter.Value>
-		    </Setter>
-	    </Style>
+        </DataTemplate>
 
-
-	    <!-- 개별 리스트박스 아이템 스타일 -->
-	    <Style TargetType="{x:Type ListBoxItem}">
-		    <Setter Property="Background" Value="Transparent" />
-		    <Setter Property="Template">
-			    <Setter.Value>
-				    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border SnapsToDevicePixels="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                Background="{TemplateBinding Background}">
-	                        <ContentPresenter />
-                        </Border>
-					    <ControlTemplate.Triggers>
-						    <Trigger Property="IsSelected" Value="True">
-							    <Setter Property="Background" Value="#447E904F" />
-						    </Trigger>
-					    </ControlTemplate.Triggers>
+        <!-- 포토 리스트박스 스타일 -->
+        <Style TargetType="{x:Type ListBox}"
+               x:Key="PhotoListBoxStyle">
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBox}">
+                        <WrapPanel Margin="5"
+                                   IsItemsHost="True"
+                                   Orientation="Horizontal"
+                                   ItemWidth="{Binding ElementName=_zoomSlider, Path='Value'}"
+                                   VerticalAlignment="Top"
+                                   HorizontalAlignment="Stretch" />
+                        <!--ItemHeight="{Binding ElementName=_zoomSlider, Path='Value'}"-->
                     </ControlTemplate>
-			    </Setter.Value>
-		    </Setter>
-	    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- 개별 리스트박스 아이템 스타일 -->
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border SnapsToDevicePixels="True"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter>
+                            </ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="DarkGray" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <DockPanel>
-	    <!-- 헤더 -->
+
+        <!-- 헤더 -->
         <Grid Height="40"
               Background="#FF356E8C"
               DockPanel.Dock="Top">
 
             <Grid.ColumnDefinitions>
-	            <ColumnDefinition Width="200"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="40"></ColumnDefinition>
-	            <ColumnDefinition Width="40"></ColumnDefinition>
-	            <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="짱도 이미지 유틸리티"
-                       Foreground="White"
-                       FontSize="16"
-                       VerticalAlignment="Center"
-                       Margin="10, 0, 0, 0">
-            </TextBlock>
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal">
 
-	        <Button x:Name="_minimizeBtn"
-	                Click="_minimizeBtn_Click"
-	                Width="40"
-	                HorizontalAlignment="Right"
-	                BorderThickness="0"
-	                Background="Transparent"
-	                Foreground="White"
-	                Grid.Column="2">
-		        <Button.Style>
-			        <Style TargetType="Button">
-				        <Setter Property="Content" Value="{materialDesign:PackIcon Kind=WindowMinimize}"/>
-			        </Style>
-		        </Button.Style>
-	        </Button>
+                <Image Margin="10, 10, 0, 10">
+                    <Image.Source>
+                        <BitmapImage UriSource="pack://application:,,,/JJangdoImageUtil;component/Resources/Images/program_icon.ico">
+                        </BitmapImage>
+                    </Image.Source>
+                </Image>
 
-            <Button x:Name="_maximizeBtn"
-	                Click="_maximizeBtn_Click"
-	                Width="40"
-	                HorizontalAlignment="Right"
-	                BorderThickness="0"
-	                Background="Transparent"
-	                Foreground="White"
-	                Grid.Column="3">
-		        <Button.Style>
-			        <Style TargetType="Button">
-				        <Setter Property="Content" Value="{materialDesign:PackIcon Kind=WindowMaximize}"/>
-			        </Style>
-		        </Button.Style>
-	        </Button>
+                <TextBlock Text="짱도 이미지 유틸리티"
+                           Foreground="White"
+                           FontSize="16"
+                           VerticalAlignment="Center"
+                           Margin="10, 0, 0, 0">
+                </TextBlock>
 
-			<Button x:Name="_closeBtn"
-                    Click="_closeBtn_Click"
-					Width="40"
-	                HorizontalAlignment="Right"
-	                BorderThickness="0"
-	                Background="Transparent"
-	                Foreground="White"
-	                Grid.Column="4">
-	            <Button.Style>
-		            <Style TargetType="Button">
-			            <Setter Property="Content" Value="{materialDesign:PackIcon Kind=Close}"/>
-		            </Style>
-	            </Button.Style>
+                <local:CircularProgressBar x:Name="_circularProgress"
+                                           Visibility="Visible"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Margin="10, 0, 0, 0">
+                </local:CircularProgressBar>
+            </StackPanel>
+
+            <Button x:Name="_minimizeBtn"
+                    Click="_minimizeBtn_Click"
+                    Width="40"
+                    HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Foreground="White"
+                    Grid.Column="1">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content"
+                                Value="{materialDesign:PackIcon Kind=WindowMinimize}" />
+                    </Style>
+                </Button.Style>
             </Button>
 
+            <Button x:Name="_maximizeBtn"
+                    Click="_maximizeBtn_Click"
+                    Width="40"
+                    HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Foreground="White"
+                    Grid.Column="2">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content"
+                                Value="{materialDesign:PackIcon Kind=WindowMaximize}" />
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="_closeBtn"
+                    Click="_closeBtn_Click"
+                    Width="40"
+                    HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Foreground="White"
+                    Grid.Column="3">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content"
+                                Value="{materialDesign:PackIcon Kind=Close}" />
+                    </Style>
+                </Button.Style>
+            </Button>
         </Grid>
 
 
         <!-- 기능 -->
-        <Grid Height="100"
-              Margin="10"
-              DockPanel.Dock="Top">
+        <TabControl DockPanel.Dock="Top"
+                    Margin="10, 10, 10, 0"
+                    Style="{StaticResource MaterialDesignTabControl}"
+                    SelectedIndex="0">
+            <TabItem Header="포맷 변환">
+                <Grid>
 
-	        <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Button x:Name="_convertGifBtn"
+                            Click="_convertGifBtn_Click"
+                            Content="GIF로 변환"
+                            Grid.Column="0"
+                            Background="LightCoral"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+
+                    <Button x:Name="_convertPngBtn"
+                            Click="_convertPngBtn_Click"
+                            Content="PNG로 변환"
+                            Grid.Column="1"
+                            Background="SeaGreen"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+
+                    <Button x:Name="_convertJpegBtn"
+                            Click="_convertJpegBtn_Click"
+                            Content="JPEG로 변환"
+                            Grid.Column="2"
+                            Background="DarkKhaki"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+
+                    <Button x:Name="_convertTiffBtn"
+                            Click="_convertTiffBtn_Click"
+                            Content="TIFF로 변환"
+                            Grid.Column="3"
+                            Background="MediumAquamarine"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+
+                    <Button x:Name="_convertWebpBtn"
+                            Click="_convertWebpBtn_Click"
+                            Content="WEBP로 변환"
+                            Grid.Column="4"
+                            Background="DeepSkyBlue"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+
+                    <Button x:Name="_convertBmpBtn"
+                            Click="_convertBmpBtn_Click"
+                            Content="BMP로 변환"
+                            Grid.Column="5"
+                            Background="HotPink"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+
+                    <Button x:Name="_convertIcoBtn"
+                            Click="_convertIcoBtn_Click"
+                            Content="ICO로 변환"
+                            Grid.Column="6"
+                            Background="Gray"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image></Image>
+                        <TextBlock>회전 변환</TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Button x:Name="_rotateClockWiseBtn"
+                            Click="_rotateClockWiseBtn_Click"
+                            Content="시계 회전"
+                            Grid.Column="0"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+
+                    <Button x:Name="_rotateCounterClockWiseBtn"
+                            Click="_rotateCounterClockWiseBtn_Click"
+                            Content="반시계 회전"
+                            Grid.Column="1"
+                            Style="{StaticResource MenuButtonStyle}">
+                    </Button>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image></Image>
+                        <TextBlock>크기 변환</TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+
+                    </Grid.RowDefinitions>
+
+                    <Button x:Name="_width5ScaleUpBtn"
+                            Click="_width5ScaleUpBtn_Click"
+                            Grid.Column="0"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FF84EFF1">
+                        <TextBlock Text="가로 길이&#x0a;5% 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center">
+                        </TextBlock>
+                    </Button>
+
+                    <Button x:Name="_height5ScaleUpBtn"
+                            Click="_height5ScaleUpBtn_Click"
+                            Grid.Column="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FF84EFF1">
+                        <TextBlock Text="세로 길이&#x0a;5% 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center">
+                        </TextBlock>
+                    </Button>
+
+                    <Button x:Name="_width5ScaleDownBtn"
+                            Click="_width5ScaleDownBtn_Click"
+                            Grid.Column="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FF84EFF1">
+                        <TextBlock Text="가로 길이&#x0a;5% 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center">
+                        </TextBlock>
+                    </Button>
+
+                    <Button x:Name="_height5ScaleDownBtn"
+                            Click="_height5ScaleDownBtn_Click"
+                            Grid.Column="3"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FF84EFF1">
+                        <TextBlock Text="세로 길이&#x0a;5% 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center">
+                        </TextBlock>
+                    </Button>
+
+
+                    <Button x:Name="_size5ScaleUpBtn"
+                            Click="_size5ScaleUpBtn_Click"
+                            Grid.Column="4"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FF84EFF1">
+                        <TextBlock Text="가로 세로&#x0a;5% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center">
+                        </TextBlock>
+                    </Button>
+
+                    <Button x:Name="_size5ScaleDownBtn"
+                            Click="_size5ScaleDownBtn_Click"
+                            Grid.Column="5"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FF84EFF1">
+                        <TextBlock Text="가로 세로&#x0a;5% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center">
+                        </TextBlock>
+                    </Button>
+
+
+                    <!-- 특정값 -->
+
+                    <TextBox Name="_widthTextBox"
+                             Style="{StaticResource NumberTextBoxStyle}"
+                             Grid.Row="2"
+                             Grid.Column="0"
+                             Padding="3"
+                             materialDesign:HintAssist.Hint="가로 길이 입력"
+                             PreviewTextInput="NumberTextBox_PreviewInput" />
+
+                    <TextBox Name="_heightTextBox"
+                             Style="{StaticResource NumberTextBoxStyle}"
+                             Grid.Row="2"
+                             Grid.Column="1"
+                             Padding="3"
+                             materialDesign:HintAssist.Hint="세로 길이 입력"
+                             PreviewTextInput="NumberTextBox_PreviewInput" />
+
+                    <Button x:Name="_widthSpecificBtn"
+                            Click="_widthSpecificBtn_Click"
+                            Grid.Column="2"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Content="가로 길이 변경"
+                            Background="#FFF3C167">
+                    </Button>
+
+                    <Button x:Name="_heightSpecificBtn"
+                            Click="_heightSpecificBtn_Click"
+                            Grid.Column="3"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Content="세로 길이 변경"
+                            Background="#FFF3C167">
+                    </Button>
+
+                    <Button x:Name="_sizeSpecificBtn"
+                            Click="_sizeSpecificBtn_Click"
+                            Grid.Column="4"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Content="가로 세로&#x0a;길이 변경"
+                            Background="#FFF3C167">
+                    </Button>
+
+                    <CheckBox x:Name="_applyAspectRatioCheckBox"
+                              Margin="5"
+                              Foreground="#FFF3C167"
+                              Grid.Column="5"
+                              Grid.Row="2"
+                              Content="비율 유지"
+                              Style="{StaticResource MaterialDesignAccentCheckBox}"
+                              HorizontalAlignment="Center"
+                              materialDesign:CheckBoxAssist.CheckBoxSize="20"
+                              BorderBrush="AntiqueWhite">
+                    </CheckBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid DockPanel.Dock="Top"
+              Margin="10, 0, 10, 5">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
-	            <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Button x:Name="_saveGifBtn"
-                    Click="_saveGifBtn_Click"
-                    Content="GIF로 저장" 
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Style="{StaticResource MenuButtonStyle}">
-            </Button>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="_saveFileUniqueIdBtn"
+                        Click="_saveFileUniqueIdBtn_Click"
+                        Grid.Column="0"
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="#FFA8F194">
+                    <TextBlock TextWrapping="Wrap"
+                               TextAlignment="Center"><Run Language="ko-kr"
+                                                           Text="고유 번호로" /><Run Text="&#xA;파일 저장" /></TextBlock>
+                </Button>
+
+                <Button x:Name="_saveFileBtn"
+                        Click="_saveFileBtn_Click"
+                        Grid.Column="1"
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="#FFA8F194">
+                    <TextBlock Text="원본 이름으로 파일 저장"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center">
+                    </TextBlock>
+                </Button>
+
+                <Button x:Name="_copyBase64ImgTagBtn"
+                        Click="_copyBase64ImgTagBtn_Click"
+                        Grid.Column="2"
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="#FFA8F194">
+                    <TextBlock Text="Base64 Img &#x0a;태그 복사"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center">
+                    </TextBlock>
+                </Button>
+
+                <Button x:Name="_developerInformationBtn"
+                        Click="_developerInformationBtn_Click"
+                        Grid.Column="3"
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="#FFA8F194">
+                    <TextBlock Text="만든 사람"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center">
+                    </TextBlock>
+                </Button>
+
+            </Grid>
+
+
+            <Rectangle Width="auto"
+                       Height="3"
+                       Margin="5"
+                       Grid.Row="1"
+                       StrokeThickness="0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush>
+                        <GradientStop x:Name="GradientStop1"
+                                      Color="#FF3D85F9"
+                                      Offset="-0.2">
+                        </GradientStop>
+                        <GradientStop x:Name="GradientStop2"
+                                      Color="White"
+                                      Offset="-0.1">
+                        </GradientStop>
+                        <GradientStop x:Name="GradientStop3"
+                                      Color="#FF3D85F9"
+                                      Offset="0.0">
+                        </GradientStop>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+                <Rectangle.Triggers>
+                    <EventTrigger RoutedEvent="Rectangle.MouseLeftButtonDown">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="_progressStoryBoard">
+                                <DoubleAnimation Storyboard.TargetName="GradientStop1"
+                                                 Storyboard.TargetProperty="Offset"
+                                                 Duration="0:0:1.2"
+                                                 BeginTime="0:0:0"
+                                                 From="-0.2"
+                                                 To="1.0">
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetName="GradientStop2"
+                                                 Storyboard.TargetProperty="Offset"
+                                                 Duration="0:0:1.1"
+                                                 BeginTime="0:0:0"
+                                                 From="-0.1"
+                                                 To="1.0">
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetName="GradientStop3"
+                                                 Storyboard.TargetProperty="Offset"
+                                                 Duration="0:0:1.0"
+                                                 BeginTime="0:0:0.0"
+                                                 From="0.0"
+                                                 To="1.0">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Rectangle.Triggers>
+            </Rectangle>
         </Grid>
 
-	    <Separator DockPanel.Dock="Top" Margin="5" Background="#FF3D85F9"></Separator>
+
 
         <!-- 이미지 슬롯 -->
-        
-
         <Grid Height="40"
-			  VerticalAlignment="Bottom"
+              VerticalAlignment="Bottom"
               Name="_footerGrid"
-			  DockPanel.Dock="Bottom"
+              DockPanel.Dock="Bottom"
               Background="#FF1B457F">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"></ColumnDefinition>
-	            <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="*"/>
-	            <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
 
 
-	        <Slider Name="_zoomSlider"
-	                Margin="10,0,0,0"
-	                Orientation="Horizontal"
-	                Minimum="80"
-	                Maximum="320"
-	                Value="160"
-	                TickFrequency="80"
-	                TickPlacement="BottomRight"
-	                Foreground="#FF98D478"
-					VerticalAlignment="Center"
-	                SmallChange="5"
-	                LargeChange="20"  />
+            <Slider Name="_zoomSlider"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal"
+                    Minimum="80"
+                    Maximum="320"
+                    Value="160"
+                    TickFrequency="80"
+                    TickPlacement="BottomRight"
+                    Foreground="#FF98D478"
+                    VerticalAlignment="Center"
+                    SmallChange="5"
+                    LargeChange="20" />
 
-            <Grid Grid.Column="2" >
-	            <Grid.ColumnDefinitions>
-		            <ColumnDefinition Width="200"/>
-		            <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="100"/>
-		            <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="200"/>
-		            <ColumnDefinition Width="10"/>
-		            <ColumnDefinition Width="auto"/>
+            <Grid Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-	            <ProgressBar Name="_progressBar"
-	                         Minimum="0"
-	                         Maximum="100"
-	                         Value="10"
-	                         Height="15"
-	                         Background="Transparent"
-	                         Foreground="#FFC9CA48"
-							 BorderBrush="Transparent"
-	                         Grid.Column="0">
-	            </ProgressBar>
+                <ProgressBar Name="_progressBar"
+                             Minimum="0"
+                             Maximum="100"
+                             Value="10"
+                             Height="15"
+                             Background="Transparent"
+                             Foreground="#FFC9CA48"
+                             BorderBrush="Transparent"
+                             Style="{x:Null}"
+                             Grid.Column="0">
+                </ProgressBar>
 
                 <TextBlock Text="1 / 100"
                            Name="_progressText"
                            Foreground="#FF4ABCCA"
                            Grid.Column="2"
                            VerticalAlignment="Center"
-						   HorizontalAlignment="Center"
+                           HorizontalAlignment="Center"
                            FontSize="16">
                 </TextBlock>
 
-	            <TextBlock Text="Gif로 변환 작업 진행중..."
-	                       Name="_progressJobName"
-	                       Foreground="#FF4ABCCA"
-	                       Grid.Column="4"
-	                       VerticalAlignment="Center"
-	                       FontSize="16">
-	            </TextBlock>
+                <TextBlock Text="Gif로 변환 작업 진행중..."
+                           Name="_progressJobName"
+                           Foreground="#FF4ABCCA"
+                           Grid.Column="4"
+                           VerticalAlignment="Center"
+                           FontSize="16">
+                </TextBlock>
 
                 <Button Grid.Column="6"
                         FontSize="16"
-						Content="0"
-						Width="30"
-						Name="_showWaitingJobButton"
-						VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch" Background="#FF2974C8">
-	                <Button.Style>
-		                <Style TargetType="{x:Type Button}">
-                            <Setter Property="Margin" Value="5"></Setter>
-                            <Setter Property="Padding" Value="0"></Setter>
-	                        <Setter Property="BorderBrush" Value="Transparent"></Setter>
+                        Content="0"
+                        Width="30"
+                        Name="_showWaitingJobButton"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Margin"
+                                    Value="5"></Setter>
+                            <Setter Property="Padding"
+                                    Value="0"></Setter>
+                            <Setter Property="BorderBrush"
+                                    Value="Transparent"></Setter>
                         </Style>
                     </Button.Style>
-                   
+                    <Button.Background>
+                        <SolidColorBrush x:Name="_showWaitingJobButton_Background"
+                                         Color="DodgerBlue">
+                        </SolidColorBrush>
+                    </Button.Background>
+                    <Button.Triggers>
+                        <EventTrigger RoutedEvent="Button.MouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="_showWaitingJobButtonStoryBoard">
+                                    <ColorAnimation Storyboard.TargetName="_showWaitingJobButton_Background"
+                                                    Storyboard.TargetProperty="Color"
+                                                    Duration="0:0:0.5"
+                                                    BeginTime="0:0:0"
+                                                    From="DodgerBlue"
+                                                    To="Orange">
+                                    </ColorAnimation>
+                                    <ColorAnimation Storyboard.TargetName="_showWaitingJobButton_Background"
+                                                    Storyboard.TargetProperty="Color"
+                                                    Duration="0:0:0.5"
+                                                    BeginTime="0:0:0.5"
+                                                    From="Orange"
+                                                    To="DodgerBlue">
+                                    </ColorAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Button.Triggers>
                 </Button>
             </Grid>
         </Grid>
-	    <Grid DataContext="{Binding Source={StaticResource Photos}}"
-	          Name="_photoListGrid"
-	          MinHeight="300"
-	          AllowDrop="True"
-	          Drop="_photoListGrid_Drop"
-	          Margin="5"
-	          DockPanel.Dock="Bottom">
 
-		    <ScrollViewer VerticalScrollBarVisibility="Auto" 
-		                  HorizontalScrollBarVisibility="Disabled">
-			    <ListBox
-				    IsSynchronizedWithCurrentItem="True"
-				    Name="_photoListBox"
-				    Style="{StaticResource PhotoListBoxStyle}"
-				    Margin="5"
-				    SelectionMode="Extended"
-				    ItemsSource="{Binding}"
-				    SelectedIndex="0">
-				    <!--
+        <Grid DataContext="{Binding Source={StaticResource Photos}}"
+              Name="_photoListGrid"
+              MinHeight="345"
+              AllowDrop="True"
+              Drop="_photoListGrid_Drop"
+              Margin="5"
+              DockPanel.Dock="Bottom">
+
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+
+                <StackPanel x:Name="_photoListEmptyPanel">
+                    <Image Width="100"
+                           Height="100">
+                        <Image.Source>
+                            <BitmapImage UriSource="pack://application:,,,/JJangdoImageUtil;component/Resources/Images/drag_and_drop.png"></BitmapImage>
+                        </Image.Source>
+                    </Image>
+
+                    <TextBlock Text="이미지를 끌어가꼬 놔주세요."
+                               Foreground="#FF89CA4A"
+                               FontSize="30">
+                    </TextBlock>
+
+
+                </StackPanel>
+                
+
+            </Grid>
+            
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <ListBox IsSynchronizedWithCurrentItem="True"
+                         Name="_photoListBox"
+                         Style="{StaticResource PhotoListBoxStyle}"
+                         Margin="5"
+                         MouseDoubleClick="_photoListBox_MouseDoubleClick"
+                         KeyDown="_photoListBox_KeyDown"
+                         SelectionMode="Extended"
+                         ItemsSource="{Binding}"
+                         SelectedIndex="0">
+                    <!--
 			        <ListBox.ContextMenu>
 				        <ContextMenu>
 					        <MenuItem Header="Edit" Click="EditPhoto" />
 				        </ContextMenu>
 			        </ListBox.ContextMenu>
                     -->
-			    </ListBox>
-		    </ScrollViewer>
-	    </Grid>
+                </ListBox>
+            </ScrollViewer>
+        </Grid>
+
+
     </DockPanel>
 </Window>

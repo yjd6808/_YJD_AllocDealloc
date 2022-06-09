@@ -14,6 +14,7 @@ namespace JJangdoImageUtil
             return MessageBox.Show(new Form() { TopMost = true }, msg, caption);
         }
 
+
         public static DialogResult Show(string msg, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icons = MessageBoxIcon.Question )
         {
             return MessageBox.Show(msg, caption, buttons, icons);
