@@ -151,8 +151,7 @@ namespace JJangdoImageUtil
         public override string ToBase64String()
         {
             IImageFormat format = _format.ToFormat();
-            string g = _sourceImage.ToBase64String(format);
-            return g;
+            return _sourceImage.ToBase64String(format);
         }
 
         public override void SetScale(float scaleX, float scaleY, bool keepAspectRatio)
