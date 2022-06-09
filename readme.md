@@ -5,6 +5,7 @@
  * [사용 방법](#how_to_use)
  * [빌드 방법](#how_to_build)
 
+<br>
 
 ### <a name="start_background"/>시작 배경
 어머니께서 내가 만든 매매 자동 글 등록 프로그램으로 편하게 글을 올리고 있었는데  
@@ -28,13 +29,13 @@ Base 64 이미지 태그로 변환시켜주는 기능만 추가해서 만들려�
 
 <br>
 
-### 클래스 구조
+### <a name="class_structure"/>클래스 구조
 
 ![3](Document/Images/ClassStructure.png)
 
 <br>
 
-### 기능
+### <a name="functionality"/>기능
 
  * GIF, PNG, JPEG, TIFF, WEBP, BMP, ICO 이미지간 포맷 변환
  * 이미지 회전
@@ -43,7 +44,7 @@ Base 64 이미지 태그로 변환시켜주는 기능만 추가해서 만들려�
 
 <br>
 
-### 사용 방법
+### <a name="how_to_use"/>사용 방법
 
 ![4](Document/Images/MainWindowFull.png)
 
@@ -52,7 +53,7 @@ Base 64 이미지 태그로 변환시켜주는 기능만 추가해서 만들려�
 
 <br>
 
-### 빌드 방법
+### <a name="how_to_build"/>빌드 방법
 
 <b>(내가 개발한 환경)</b>  
 비주얼 스튜디오 : VS2022  
@@ -61,6 +62,6 @@ Base 64 이미지 태그로 변환시켜주는 기능만 추가해서 만들려�
 비주얼 스튜디오 인스톨러에서 닷넷 데스크톱 개발 도구를 설치 해줘야  
 빌드를 할 수 있다.
 
-단순하게 JJangdoImageUtil.sln 솔루션 파일을 실행해서 F5를 눌러서 빌드하면 댐
+단순하게 JJangdoImageUtil.sln 솔루션 파일을 실행해서 F5를 눌러서 빌드하면 댐  
 
 ![5](Document/Images/VSInstaller.png)
