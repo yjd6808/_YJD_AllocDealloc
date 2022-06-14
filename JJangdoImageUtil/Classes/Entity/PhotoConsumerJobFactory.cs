@@ -18,7 +18,7 @@ namespace JJangdoImageUtil
         {
             Add,
             RotateClockwise,
-            RotateCounterclockwise,
+            RotateCounterClockwise,
             ConvertGif,
             ConvertPng,
             ConvertJpeg,
@@ -51,7 +51,7 @@ namespace JJangdoImageUtil
         {
             { (int)JobType.Add,                      ADD_TEXT                                   },
             { (int)JobType.RotateClockwise,          ROTATE_CLOCKWISE_TEXT                      },
-            { (int)JobType.RotateCounterclockwise,   ROTATE_COUNTERCLOCKWISE_TEXT               },
+            { (int)JobType.RotateCounterClockwise,   ROTATE_COUNTERCLOCKWISE_TEXT               },
             { (int)JobType.ConvertGif,               CONVERT_GIF_TEXT                           },
             { (int)JobType.ConvertPng,               CONVERT_PNG_TEXT                           },
             { (int)JobType.ConvertJpeg,              CONVERT_JPEG_TEXT                          },
@@ -68,7 +68,7 @@ namespace JJangdoImageUtil
         public static readonly StringBuilder Base64Builder = new StringBuilder(10000000);
         public static Dispatcher Dispatcher;
 
-        public static CreateMultiJob<Photo> CreateAddMultiJob(List<string> files)
+        public static ObservableJob CreateAdd(List<string> files)
         {
             var funcs = new List<Func<Photo>>();
 
@@ -78,20 +78,20 @@ namespace JJangdoImageUtil
             return new CreateMultiJob<Photo>((int)JobType.Add, funcs);
         }
 
-        public static UpdateMultiJob<Photo> CreateRotateMultiJob(ImageRotate rotate)
+        public static ObservableJob CreateRotate(ImageRotate rotate)
         {
             switch (rotate)
             {
                 case ImageRotate.ClockWise:
                     return new UpdateMultiJob<Photo>((int)JobType.RotateClockwise, (photo) => photo.RotateClockWise());
                 case ImageRotate.CounterClockWise:
-                    return new UpdateMultiJob<Photo>((int)JobType.RotateCounterclockwise, (photo) => photo.RotateCounterClockWise());
+                    return new UpdateMultiJob<Photo>((int)JobType.RotateCounterClockwise, (photo) => photo.RotateCounterClockWise());
             }
 
             return null;
         }
 
-        public static UpdateMultiJob<Photo> CreateConvertMultiJob(ImageFormat format)
+        public static ObservableJob CreateConvert(ImageFormat format)
         {
             switch (format)
             {
@@ -115,7 +115,7 @@ namespace JJangdoImageUtil
             return null;
         }
 
-        public static UpdateMultiJob<Photo> CreateSaveMultiJob(string directoryPath, bool saveWithUniqueId)
+        public static ObservableJob CreateSave(string directoryPath, bool saveWithUniqueId)
         {
             if (!Directory.Exists(directoryPath))
                 throw new Exception("해당 경로가 존재하지 않습니다.");
@@ -152,25 +152,25 @@ namespace JJangdoImageUtil
             return singleJob;
         }
 
-        public static UpdateMultiJob<Photo> CreateSetScaleMultiJob(float scaleX, float scaleY, bool keepAspectRatio)
+        public static ObservableJob CreateSetScale(float scaleX, float scaleY, bool keepAspectRatio)
         {
             return new UpdateMultiJob<Photo>((int)JobType.ChangeSizeWithScaleValue,
                 (photo) => photo.SetScale(scaleX, scaleY, keepAspectRatio));
         }
 
-        public static UpdateMultiJob<Photo> CreateSetWidthMultiJob(int width, bool keepAspectRatio)
+        public static ObservableJob CreateSetWidth(int width, bool keepAspectRatio)
         {
             return new UpdateMultiJob<Photo>((int)JobType.ChangeSizeWithFixedValue,
                 (photo) => photo.SetWidth(width, keepAspectRatio));
         }
 
-        public static UpdateMultiJob<Photo> CreateSetHeightMultiJob(int height, bool keepAspectRatio)
+        public static ObservableJob CreateSetHeight(int height, bool keepAspectRatio)
         {
             return new UpdateMultiJob<Photo>((int)JobType.ChangeSizeWithFixedValue,
                 (photo) => photo.SetHeight(height, keepAspectRatio));
         }
 
-        public static UpdateMultiJob<Photo> CreateSetSizeMultiJob(int width, int height, bool keepAspectRatio)
+        public static ObservableJob CreateSetSize(int width, int height, bool keepAspectRatio)
         {
             return new UpdateMultiJob<Photo>((int)JobType.ChangeSizeWithFixedValue,
                 (photo) => photo.SetSize(width, height, keepAspectRatio));

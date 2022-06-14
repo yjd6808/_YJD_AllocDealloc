@@ -11,10 +11,9 @@
         mc:Ignorable="d"
         Title="JJangdo Image"
         MinHeight="250"
-        Height="610"
-        MinWidth="800"
+        Height="760"
+        MinWidth="760"
         Width="800"
-        x:Name="_window"
         MouseDown="_window_MouseDown"
         ResizeMode="CanResizeWithGrip"
         WindowStyle="None"
@@ -366,7 +365,8 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50"></RowDefinition>
                         <RowDefinition Height="50"></RowDefinition>
-
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
                     </Grid.RowDefinitions>
 
                     <Button x:Name="_width5ScaleUpBtn"
@@ -436,12 +436,185 @@
                         </TextBlock>
                     </Button>
 
+                    <!-- 가로 세로 길이 비율 감소 -->
+
+                    <Button x:Name="_size10ScaleDownBtn_Copy"
+                            Click="_size10ScaleDownBtn_Click"
+                            Grid.Column="0"
+                            Grid.Row="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;10% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size20ScaleDownBtn_Copy"
+                            Click="_size20ScaleDownBtn_Click"
+                            Grid.Column="1"
+                            Grid.Row="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;20% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size40ScaleDownBtn_Copy"
+                            Click="_size40ScaleDownBtn_Click"
+                            Grid.Column="2"
+                            Grid.Row="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;40% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size50ScaleDownBtn_Copy"
+                            Click="_size50ScaleDownBtn_Click"
+                            Grid.Column="3"
+                            Grid.Row="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;50% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size60ScaleDownBtn_Copy"
+                            Click="_size60ScaleDownBtn_Click"
+                            Grid.Column="4"
+                            Grid.Row="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;60% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size80ScaleDownBtn_Copy"
+                            Click="_size80ScaleDownBtn_Click"
+                            Grid.Column="5"
+                            Grid.Row="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;80% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size90ScaleDownBtn_Copy"
+                            Click="_size90ScaleDownBtn_Click"
+                            Grid.Column="6"
+                            Grid.Row="1"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;90% 길이 감소"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+
+                    <!-- 가로 세로 길이 비율 증가 -->
+
+                    <Button x:Name="_size10ScaleUpBtn_Copy"
+                            Click="_size10ScaleUpBtn_Click"
+                            Grid.Column="0"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;10% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size20ScaleUpBtn_Copy"
+                            Click="_size20ScaleUpBtn_Click"
+                            Grid.Column="1"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;20% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size40ScaleUpBtn_Copy"
+                            Click="_size40ScaleUpBtn_Click"
+                            Grid.Column="2"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;40% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size50ScaleUpBtn_Copy"
+                            Click="_size50ScaleUpBtn_Click"
+                            Grid.Column="3"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;50% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size60ScaleUpBtn_Copy"
+                            Click="_size60ScaleUpBtn_Click"
+                            Grid.Column="4"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;60% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size80ScaleUpBtn_Copy"
+                            Click="_size80ScaleUpBtn_Click"
+                            Grid.Column="5"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;80% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
+                    <Button x:Name="_size90ScaleUpBtn_Copy"
+                            Click="_size90ScaleUpBtn_Click"
+                            Grid.Column="6"
+                            Grid.Row="2"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Background="#FFACAAEC"
+                            Margin="5,5,5,5">
+                        <TextBlock Text="가로 세로&#xA;90% 길이 증가"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Button>
+
 
                     <!-- 특정값 -->
 
                     <TextBox Name="_widthTextBox"
                              Style="{StaticResource NumberTextBoxStyle}"
-                             Grid.Row="2"
+                             Grid.Row="5"
                              Grid.Column="0"
                              Padding="3"
                              materialDesign:HintAssist.Hint="가로 길이 입력"
@@ -449,7 +622,7 @@
 
                     <TextBox Name="_heightTextBox"
                              Style="{StaticResource NumberTextBoxStyle}"
-                             Grid.Row="2"
+                             Grid.Row="5"
                              Grid.Column="1"
                              Padding="3"
                              materialDesign:HintAssist.Hint="세로 길이 입력"
@@ -458,7 +631,7 @@
                     <Button x:Name="_widthSpecificBtn"
                             Click="_widthSpecificBtn_Click"
                             Grid.Column="2"
-                            Grid.Row="2"
+                            Grid.Row="5"
                             Style="{StaticResource MenuButtonStyle}"
                             Content="가로 길이 변경"
                             Background="#FFF3C167">
@@ -467,7 +640,7 @@
                     <Button x:Name="_heightSpecificBtn"
                             Click="_heightSpecificBtn_Click"
                             Grid.Column="3"
-                            Grid.Row="2"
+                            Grid.Row="5"
                             Style="{StaticResource MenuButtonStyle}"
                             Content="세로 길이 변경"
                             Background="#FFF3C167">
@@ -476,7 +649,7 @@
                     <Button x:Name="_sizeSpecificBtn"
                             Click="_sizeSpecificBtn_Click"
                             Grid.Column="4"
-                            Grid.Row="2"
+                            Grid.Row="5"
                             Style="{StaticResource MenuButtonStyle}"
                             Content="가로 세로&#x0a;길이 변경"
                             Background="#FFF3C167">
@@ -486,14 +659,17 @@
                               Margin="5"
                               Foreground="#FFF3C167"
                               Grid.Column="5"
-                              Grid.Row="2"
+                              Grid.Row="5"
                               Content="비율 유지"
                               Style="{StaticResource MaterialDesignAccentCheckBox}"
                               HorizontalAlignment="Center"
                               materialDesign:CheckBoxAssist.CheckBoxSize="20"
                               BorderBrush="AntiqueWhite">
                     </CheckBox>
+
+
                 </Grid>
+
             </TabItem>
         </TabControl>
 
@@ -756,13 +932,9 @@
                                Foreground="#FF89CA4A"
                                FontSize="30">
                     </TextBlock>
-
-
                 </StackPanel>
-                
-
             </Grid>
-            
+
 
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
@@ -771,6 +943,9 @@
                          Style="{StaticResource PhotoListBoxStyle}"
                          Margin="5"
                          MouseDoubleClick="_photoListBox_MouseDoubleClick"
+                         MouseLeftButtonDown="_photoListBox_MouseLeftButtonDown"
+                         MouseMove="_photoListBox_MouseMove"
+                         MouseLeftButtonUp="_photoListBox_MouseLeftButtonUp"
                          KeyDown="_photoListBox_KeyDown"
                          SelectionMode="Extended"
                          ItemsSource="{Binding}"

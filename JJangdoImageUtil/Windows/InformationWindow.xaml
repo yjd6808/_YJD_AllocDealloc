@@ -41,9 +41,8 @@
                        Foreground="{Binding ForegroundColor}"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"
-                       VerticalAlignment="Center"><Run Language="ko-kr"
-                                                       Text="V" /><Run Text="ersion " /><Run Language="ko-kr"
-                                                                                             Text="1.0.0" /></TextBlock>
+                       VerticalAlignment="Center"><Run Text="V" /><Run Text="ersion " /><Run Text="1." /><Run Language="ko-kr"
+                                                                                                              Text="1" /><Run Text=".0" /></TextBlock>
             <Button Grid.Row="1"
                     Foreground="Transparent"
                     Background="Transparent"

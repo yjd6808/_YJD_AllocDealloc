@@ -23,7 +23,7 @@ namespace JJangdoImageUtil
     public delegate void CancelHandler(ObservableJob canceledJob);
     public delegate void UpdateHandler(ObservableJob doingJob);
 
-    public class ObservableCollectionConsumer<T> where T : class
+    public class ObservableCollectionConsumer<T> where T : class, IWpfEntity
     {
         public enum State
         {
@@ -45,6 +45,7 @@ namespace JJangdoImageUtil
         private AutoResetEvent _waitHandle;                 // Consumer 멈출 때 사용하는 녀석
         private object _consumerlock;
         private int _multiCounter;
+        private ConcurrentQueue<T> _multiElements;            // 멀티작업 임시 보관용
 
         public event EventHandler OnEnqueueJob;
         public event StartedHandler OnStartedJob;
@@ -59,6 +60,7 @@ namespace JJangdoImageUtil
             _collection = collection;
             _consumerThread = new Thread(ConsumerThread) { IsBackground = true };
             _jobQueue = new LinkedList<ObservableJob>();
+            _multiElements = new ConcurrentQueue<T>();
             _waitHandle = new AutoResetEvent(false);
             _consumerlock = new object();
             _state = Convert.ToInt32(State.Initialized);
@@ -257,7 +259,10 @@ namespace JJangdoImageUtil
             if (createMultiJob == null)
                 throw new Exception("createMultiJob == null");
 
+            // 멀티 작업 관련 리소스 초기화
             Interlocked.Exchange(ref _multiCounter, 0);
+            _multiElements.Clear();
+
             int totalCount = createMultiJob.TotalTargetCount;
 
             for (int i = 0; i < totalCount; i++)
@@ -265,6 +270,15 @@ namespace JJangdoImageUtil
 
             if (totalCount > 0)
                 createMultiJob.WaitOne();
+
+            while (!_multiElements.IsEmpty)
+            {
+                if (_multiElements.TryDequeue(out T createdElem))
+                    _dispatcher.Invoke(() => _collection.Add(createdElem));
+
+                if (!_currentJob.NoDelay)
+                    Thread.Sleep(_delay);
+            }
 
             ProcessJobEnd();
         }
@@ -287,6 +301,7 @@ namespace JJangdoImageUtil
                     case ObservableJob.State.Completed:
                         _currentJob.IncrementCompletedTargetCount();
                         _currentJob.Updated(OnUpdatedJob, state);
+                        _multiElements.Enqueue(result);
                         break;
                     case ObservableJob.State.Failed:
                         _currentJob.IncrementFailedTargetCount();
@@ -294,15 +309,7 @@ namespace JJangdoImageUtil
                         break;
                 }
 
-                if (result != null)
-                    _dispatcher.Invoke(() => _collection.Add(result));
-
-                if (state == ObservableJob.State.Canceled)
-                    return;
-
-                // 작업이 중단되었거나 모두 처리된 경우
-                if (!_currentJob.NoDelay)
-                    Thread.Sleep(_delay);
+                
             }
             finally
             {
@@ -331,9 +338,11 @@ namespace JJangdoImageUtil
                 {
                     case ObservableJob.State.Completed:
                         _currentJob.IncrementCompletedTargetCount();
+                        _currentJob.Updated(OnUpdatedJob, state);
                         break;
                     case ObservableJob.State.Failed:
                         _currentJob.IncrementFailedTargetCount();
+                        _currentJob.Updated(OnUpdatedJob, state);
                         break;
                     case ObservableJob.State.Canceled:
                         goto FINISHED;
@@ -387,7 +396,6 @@ namespace JJangdoImageUtil
                     case ObservableJob.State.Canceled:
                         goto FINISHED;
                 }
-
                 
 
                 if (!_currentJob.NoDelay)
@@ -407,16 +415,26 @@ namespace JJangdoImageUtil
             if (updateMultiJob == null)
                 throw new Exception("updateMultiJob == null");
 
+            // 멀티 작업 관련 리소스 초기화
             Interlocked.Exchange(ref _multiCounter, 0);
+            _multiElements.Clear();
 
             if (_collection.Count > 0)
             {
                 foreach (T target in _collection)
-                {
                     ThreadPool.QueueUserWorkItem(ProcessUpdateMultiJobProcedure, target);
-                }
+                
 
                 updateMultiJob.WaitOne();
+
+                while (!_multiElements.IsEmpty)
+                {
+                    if (_multiElements.TryDequeue(out T updatedElem))
+                        updatedElem.Update();
+
+                    if (!_currentJob.NoDelay)
+                        Thread.Sleep(_delay);
+                }
             }
 
             ProcessJobEnd();
@@ -431,25 +449,21 @@ namespace JJangdoImageUtil
                 if (currentMultiJob.IsCanceled())
                     return;
 
-                ObservableJob.State state = currentMultiJob.RunUpdateAction(target as T);
+                T targetType = target as T;
+                ObservableJob.State state = currentMultiJob.RunUpdateAction(targetType);
 
                 switch (state)
                 {
                     case ObservableJob.State.Completed:
                         _currentJob.IncrementCompletedTargetCount();
                         _currentJob.Updated(OnUpdatedJob, state);
+                        _multiElements.Enqueue(targetType);
                         break;
                     case ObservableJob.State.Failed:
                         _currentJob.IncrementFailedTargetCount();
                         _currentJob.Updated(OnUpdatedJob, state);
                         break;
                 }
-
-                if (state == ObservableJob.State.Canceled)
-                    return;
-
-                if (!_currentJob.NoDelay)
-                    Thread.Sleep(_delay);
             }
             finally
             {

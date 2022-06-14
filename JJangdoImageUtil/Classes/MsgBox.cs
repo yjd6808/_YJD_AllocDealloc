@@ -9,9 +9,9 @@ namespace JJangdoImageUtil
 {
     public class MsgBox
     {
-        public static DialogResult ShowTopMost(string msg, string caption = "")
+        public static DialogResult ShowTopMost(string msg, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icons = MessageBoxIcon.Question)
         {
-            return MessageBox.Show(new Form() { TopMost = true }, msg, caption);
+            return MessageBox.Show(new Form() { TopMost = true }, msg, caption, buttons, icons);
         }
 
 
@@ -19,5 +19,7 @@ namespace JJangdoImageUtil
         {
             return MessageBox.Show(msg, caption, buttons, icons);
         }
+
+
     }
 }

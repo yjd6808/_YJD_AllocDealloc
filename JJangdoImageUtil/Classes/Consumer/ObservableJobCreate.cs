@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JJangdoImageUtil
 {
-    public abstract class ObservableJobCreate<T> : ObservableJob where T : class
+    public abstract class ObservableJobCreate<T> : ObservableJob where T : class, IWpfEntity
     {
         protected List<Func<T>> _funcs;
 
@@ -20,7 +20,7 @@ namespace JJangdoImageUtil
             _totalTargetCount = funcs.Count;
         }
 
-        public T RunCreationAction<T>(int idx, out State state) where T : class
+        public T RunCreationAction<T>(int idx, out State state) where T : class, IWpfEntity
         {
             if (IsCanceled())
             {
@@ -31,11 +31,7 @@ namespace JJangdoImageUtil
             try
             {
                 var result = _funcs[idx]() as T;
-
-                if (result != null)
-                    state = State.Completed;
-
-                state = State.Failed;
+                state = result != null ? State.Completed : State.Failed;
                 return result;
             }
             catch

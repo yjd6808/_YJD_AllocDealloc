@@ -24,8 +24,9 @@ using System.Windows.Media.Imaging;
 
 namespace JJangdoImageUtil
 {
-    public class Photo : INotifyPropertyChanged, IDisposable
+    public class Photo : INotifyPropertyChanged, IDisposable, IWpfEntity
     {
+        public static readonly SixLabors.ImageSharp.Size PossibleSize = new SixLabors.ImageSharp.Size(2000, 2000);
         private static int SequenceId = 0;
 
         protected readonly int _uniqueId;
@@ -44,8 +45,9 @@ namespace JJangdoImageUtil
             _source = new Uri(path);
             _sourceImage = ImageWrapper.Load(path, out format);
 
-            if (_sourceImage == null)
-                throw new Exception("new Photo(string path) failed");
+            // 이미지 크기가 2000x2000 이상이면 비율대로 이하만큼 줄여서 보여주도록 함
+            if (_sourceImage.GetWidth() >= PossibleSize.Width || _sourceImage.GetHeight() >= PossibleSize.Height)
+                _sourceImage.SetSize(PossibleSize.Width, PossibleSize.Height, true);
         }
 
         public Photo(string path, ImageFormat format)
@@ -53,6 +55,9 @@ namespace JJangdoImageUtil
             _uniqueId = Interlocked.Increment(ref SequenceId);
             _source = new Uri(path);
             _sourceImage = ImageWrapper.Load(path, out format);
+
+            if (_sourceImage.GetWidth() >= PossibleSize.Width || _sourceImage.GetHeight() >= PossibleSize.Height)
+                _sourceImage.SetSize(PossibleSize.Width, PossibleSize.Height, true);
         }
 
         protected void OnPropertyChanged(string name)
@@ -102,6 +107,7 @@ namespace JJangdoImageUtil
 
 
         public override string ToString() => _source.ToString();
+      
 
 
         public void To(ImageFormat Type)
@@ -122,85 +128,70 @@ namespace JJangdoImageUtil
         public void ToJpeg()
         {
             SourceImage = _sourceImage.ToJpeg();
-            UpdateBitmapSource();
         }
 
         public void ToWebp()
         {
             SourceImage = _sourceImage.ToWebp();
-            UpdateBitmapSource();
         }
 
         public void ToPng()
         {
             SourceImage = _sourceImage.ToPng();
-            UpdateBitmapSource();
         }
 
         public void ToBmp()
         {
             SourceImage = _sourceImage.ToBmp();
-            UpdateBitmapSource();
         }
 
         public void ToTiff()
         {
             SourceImage = _sourceImage.ToTiff();
-            UpdateBitmapSource();
         }
 
         public void ToGif()
         {
             SourceImage = _sourceImage.ToGif();
-            UpdateBitmapSource();
         }
 
         public void ToIco()
         {
             SourceImage = _sourceImage.ToIco();
-            UpdateBitmapSource();
         }
 
         public void RotateClockWise()
         {
             _sourceImage.RotateClockWise();
-            SourceImage = _sourceImage;
-            UpdateBitmapSource();
         }
 
         public void RotateCounterClockWise()
         {
             _sourceImage.RotateCounterClockWise();
-            SourceImage = _sourceImage;
-            UpdateBitmapSource();
         }
 
         public void SetScale(float scaleX, float scaleY, bool keepAspectRatio)
         {
             _sourceImage.SetScale(scaleX, scaleY, keepAspectRatio);
             SourceImage = _sourceImage;
-            UpdateBitmapSource();
         }
 
         public void SetSize(int width, int height, bool keepAspectRatio)
         {
             _sourceImage.SetSize(width, height, keepAspectRatio);
             SourceImage = _sourceImage;
-            UpdateBitmapSource();
         }
 
         public void SetWidth(int width, bool keepAspectRatio)
         {
             _sourceImage.SetWidth(width, keepAspectRatio);
             SourceImage = _sourceImage;
-            UpdateBitmapSource();
         }
 
         public void SetHeight(int height, bool keepAspectRatio)
         {
             _sourceImage.SetHeight(height, keepAspectRatio);
             SourceImage = _sourceImage;
-            UpdateBitmapSource();
         }
 
         public void Save(string directoryPath, bool saveWithUniqueId = true)
@@ -245,6 +236,7 @@ namespace JJangdoImageUtil
 
                 var bitmapImg = new BitmapImage();
                 bitmapImg.BeginInit();
+                bitmapImg.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImg.StreamSource = _sourceImage.Stream;
                 bitmapImg.EndInit();
 
@@ -256,6 +248,12 @@ namespace JJangdoImageUtil
         public void Dispose()
         {
             _sourceImage?.Dispose();
+        }
+
+        public void Update()
+        {
+            SourceImage = _sourceImage; // 프로퍼티 업데이트
+            UpdateBitmapSource();       // 이미지 소스 -> 이미지 컨트롤에 반영
         }
     }
 }

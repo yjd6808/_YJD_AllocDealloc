@@ -30,7 +30,9 @@ namespace JJangdoImageUtil
     {
         public PhotoCollection Photos;
         public ObservableCollectionConsumer<Photo> PhotosConsumer;
-        
+
+        private Photo _draggedPhoto;
+        private Photo _onMousedPhoto;
 
         public MainWindow()
         {
@@ -54,6 +56,9 @@ namespace JJangdoImageUtil
 
             _circularProgress.SetColor(Brushes.LightSteelBlue);
             _circularProgress.SetScale(0.8);
+
+            _photoListBox.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(_photoListBox_MouseLeftButtonDown), true);
+            _photoListBox.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(_photoListBox_MouseLeftButtonUp), true);
 
             SetVisibleProgress(false);
         }
@@ -177,7 +182,20 @@ namespace JJangdoImageUtil
 
                 // 이미지 파일이 아닌녀석들 제거
                 files.RemoveAll((x) => !ImageUtil.IsImageFile(x));
-                PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateAddMultiJob(files));
+
+                int exceptedFiles = files.Count((x) =>
+                {
+                    using (var fs = new FileStream(x, FileMode.Open, FileAccess.Read))
+                    {
+                        var frame = BitmapFrame.Create(fs, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
+                        return frame.PixelWidth >= Photo.PossibleSize.Width || frame.PixelHeight >= Photo.PossibleSize.Height;
+                    }
+                });
+
+                if (exceptedFiles > 0 && MsgBox.ShowTopMost($"가로 또는 세로가 {Photo.PossibleSize.Width}을 초과하는 이미지가 {exceptedFiles}개 있습니다.\n빠른 작업을 위해 가로와 세로 모두 2000미만의 \n이미지로 표시됩니다. 그래도 진행하시겠습니까?", "", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                    return;
+
+                PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateAdd(files));
             }
         }
 
@@ -224,46 +242,46 @@ namespace JJangdoImageUtil
 
         private void _convertGifBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvertMultiJob(ImageFormat.Gif));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvert(ImageFormat.Gif));
         }
 
         private void _convertPngBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvertMultiJob(ImageFormat.Png));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvert(ImageFormat.Png));
         }
 
         private void _convertJpegBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvertMultiJob(ImageFormat.Jpeg));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvert(ImageFormat.Jpeg));
         }
         private void _convertTiffBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvertMultiJob(ImageFormat.Tiff));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvert(ImageFormat.Tiff));
         }
 
         private void _convertWebpBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvertMultiJob(ImageFormat.Webp));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvert(ImageFormat.Webp));
         }
 
         private void _convertBmpBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvertMultiJob(ImageFormat.Bmp));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvert(ImageFormat.Bmp));
         }
 
         private void _convertIcoBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvertMultiJob(ImageFormat.Ico));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateConvert(ImageFormat.Ico));
         }
 
         private void _rotateClockWiseBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateRotateMultiJob(ImageRotate.ClockWise));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateRotate(ImageRotate.ClockWise));
         }
 
         private void _rotateCounterClockWiseBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateRotateMultiJob(ImageRotate.CounterClockWise));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateRotate(ImageRotate.CounterClockWise));
         }
 
         private void _saveFileUniqueIdBtn_Click(object sender, RoutedEventArgs e)
@@ -272,7 +290,7 @@ namespace JJangdoImageUtil
             {
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSaveMultiJob(dialog.SelectedPath, true));
+                    PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSave(dialog.SelectedPath, true));
                 }
             }
         }
@@ -283,7 +301,7 @@ namespace JJangdoImageUtil
             {
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSaveMultiJob(dialog.SelectedPath, false));
+                    PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSave(dialog.SelectedPath, false));
                 }
             }
         }
@@ -296,32 +314,32 @@ namespace JJangdoImageUtil
 
         private void _width5ScaleUpBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScaleMultiJob(1.05f, 1.00f, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.05f, 1.00f, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _height5ScaleUpBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScaleMultiJob(1.00f, 1.05f, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.00f, 1.05f, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _width5ScaleDownBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScaleMultiJob(0.95f, 1.00f, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.95f, 1.00f, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _height5ScaleDownBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScaleMultiJob(1.00f, 0.95f, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.00f, 0.95f, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _size5ScaleUpBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScaleMultiJob(1.05f, 1.05f, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.05f, 1.05f, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _size5ScaleDownBtn_Click(object sender, RoutedEventArgs e)
         {
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScaleMultiJob(0.95f, 0.95f, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.95f, 0.95f, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void NumberTextBox_PreviewInput(object sender, TextCompositionEventArgs e)
@@ -339,7 +357,7 @@ namespace JJangdoImageUtil
                 return;
             }
 
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetWidthMultiJob(width, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetWidth(width, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _heightSpecificBtn_Click(object sender, RoutedEventArgs e)
@@ -352,7 +370,8 @@ namespace JJangdoImageUtil
                 return;
             }
 
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetHeightMultiJob(height, _applyAspectRatioCheckBox.IsChecked.Value));
+
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetHeight(height, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _sizeSpecificBtn_Click(object sender, RoutedEventArgs e)
@@ -366,7 +385,7 @@ namespace JJangdoImageUtil
                 return;
             }
 
-            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetSizeMultiJob(width, height, _applyAspectRatioCheckBox.IsChecked.Value));
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetSize(width, height, _applyAspectRatioCheckBox.IsChecked.Value));
         }
 
         private void _developerInformationBtn_Click(object sender, RoutedEventArgs e)
@@ -407,6 +426,119 @@ namespace JJangdoImageUtil
             }
         }
 
-       
+
+        private void _size10ScaleDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.90f, 0.90f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size20ScaleDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.80f, 0.80f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size40ScaleDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.60f, 0.60f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size50ScaleDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.50f, 0.50f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size60ScaleDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.40f, 0.40f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size80ScaleDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.20f, 0.20f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size90ScaleDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(0.10f, 0.10f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size10ScaleUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.10f, 1.10f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size20ScaleUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.20f, 1.20f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size40ScaleUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.40f, 1.40f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size50ScaleUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.50f, 1.50f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size60ScaleUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.60f, 1.60f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size80ScaleUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.80f, 1.80f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _size90ScaleUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PhotosConsumer.EnqueueJob(PhotoConsumerJobFactory.CreateSetScale(1.90f, 1.90f, _applyAspectRatioCheckBox.IsChecked.Value));
+        }
+
+        private void _photoListBox_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (PhotosConsumer.IsProcessing())
+            {
+                MsgBox.ShowTopMost("작업 진행중에는 건드릴 수 없습니다.");
+                return;
+            }
+
+            Photo photo = _photoListBox.SelectedItem as Photo;
+
+            if (photo == null || photo.BindedControl == null)
+                return;
+
+            _draggedPhoto = photo;
+        }
+
+
+        private void _photoListBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_draggedPhoto != null && _onMousedPhoto != null)
+            {
+                int draggedPhotoIdx = Photos.IndexOf(_draggedPhoto);
+                int onMousePhotoIdx = Photos.IndexOf(_onMousedPhoto);
+
+                Photos.Move(draggedPhotoIdx, onMousePhotoIdx);
+            }
+
+            _draggedPhoto = null;
+            _onMousedPhoto = null;
+        }
+
+        private void _photoListBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_draggedPhoto == null)
+                return;
+
+            Photo photo = _photoListBox.SelectedItem as Photo;
+
+            if (photo == null || photo.BindedControl == null)
+                return;
+
+            _onMousedPhoto = photo;
+        }
     }
 }

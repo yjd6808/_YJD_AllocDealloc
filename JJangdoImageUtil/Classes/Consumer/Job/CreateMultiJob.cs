@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JJangdoImageUtil
 {
-    public class CreateMultiJob<T> : ObservableJobCreate<T>, IMultiJob where T : class
+    public class CreateMultiJob<T> : ObservableJobCreate<T> where T : class, IWpfEntity
     {
         private readonly AutoResetEvent _waitHandle;
 
