@@ -4,20 +4,90 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JJangdoImageUtil"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="_imageDisplayWindow"
         Height="auto"
         Width="auto"
-        ResizeMode="NoResize"
+        ResizeMode="CanResizeWithGrip"
         AllowsTransparency="True"
         WindowStyle="None"
         Left="0"
         Top="0"
         MouseDown="Window_MouseDown"
         Loaded="Window_Loaded">
-    <StackPanel>
-        <Border BorderThickness="4" BorderBrush="Black">
-            <Image Name="_displayImage"></Image>
+
+    <DockPanel>
+        <Grid Height="40"
+              Name="_titleGrid"
+              Background="#FF356E8C"
+              DockPanel.Dock="Top">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal">
+
+                <Image Margin="10, 10, 0, 10">
+                    <Image.Source>
+                        <BitmapImage UriSource="pack://application:,,,/JJangdoImageUtil;component/Resources/Images/program_icon.ico">
+                        </BitmapImage>
+                    </Image.Source>
+                </Image>
+
+                <TextBlock Text="짱도 이미지 유틸리티"
+                           Name="_imageNameTextBox"
+                           Foreground="White"
+                           FontSize="16"
+                           VerticalAlignment="Center"
+                           Margin="10, 0, 0, 0">
+                </TextBlock>
+            </StackPanel>
+
+            <Button x:Name="_minimizeBtn"
+                    Click="_minimizeBtn_Click"
+                    Width="40"
+                    HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Foreground="White"
+                    Grid.Column="1">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content"
+                                Value="{materialDesign:PackIcon Kind=WindowMinimize}" />
+                    </Style>
+                </Button.Style>
+            </Button>
+
+
+            <Button x:Name="_closeBtn"
+                    Click="_closeBtn_Click"
+                    Width="40"
+                    HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Foreground="White"
+                    Grid.Column="3">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content"
+                                Value="{materialDesign:PackIcon Kind=Close}" />
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+
+        <Border x:Name="_displayerImageBorder"
+                BorderThickness="4"
+                BorderBrush="Black">
+                <Image Name="_displayImage"
+                       Stretch="UniformToFill"></Image>
         </Border>
-    </StackPanel>
+    </DockPanel>
+    
 </Window>

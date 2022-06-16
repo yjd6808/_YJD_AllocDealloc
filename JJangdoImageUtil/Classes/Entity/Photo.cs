@@ -230,13 +230,13 @@ namespace JJangdoImageUtil
 
         public void UpdateBitmapSource()
         {
+            _sourceImage.Stream.Position = 0;       // 스트림 포지션을 0으로 바꿔줘서 다시 재사용가능하도록 하자.
             _imgControl.Dispatcher.Invoke(() =>
             {
                 _imgControl.BeginInit();
 
                 var bitmapImg = new BitmapImage();
                 bitmapImg.BeginInit();
-                bitmapImg.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImg.StreamSource = _sourceImage.Stream;
                 bitmapImg.EndInit();
 

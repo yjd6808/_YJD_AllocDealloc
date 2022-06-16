@@ -139,6 +139,7 @@
     <Compile Include="Classes\Consumer\ObservableJobUpdate.cs" />
     <Compile Include="Classes\Entity\IWpfEntity.cs" />
     <Compile Include="Classes\Extension\CollectionExtension.cs" />
+    <Compile Include="Classes\Image\ImageOrientation.cs" />
     <Compile Include="Classes\Util\DisplayDistanceComparer.cs" />
     <Compile Include="Classes\Util\DisplayUtility.cs" />
     <Compile Include="Classes\Util\WindowUtility.cs" />

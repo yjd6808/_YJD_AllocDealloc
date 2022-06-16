@@ -35,7 +35,7 @@ namespace JJangdoImageUtil
         public ImageWrapperIcon(ImageWrapperGeneral generalWrapper)
         {
             _stream = new MemoryStream();
-            _iconBitmap = ImageConverter.ConvertToIco(generalWrapper._sourceImage, _stream, IconSize, out _format);
+            _iconBitmap = ImageConverter.ConvertToIco(generalWrapper.SourceImage, _stream, IconSize, out _format);
         }
 
         protected override void Initialize(string path)
@@ -43,7 +43,6 @@ namespace JJangdoImageUtil
             _stream = new MemoryStream();
             _iconBitmap = Image.FromFile(path) as Bitmap;
             _iconBitmap.Save(_stream, System.Drawing.Imaging.ImageFormat.Png);
-            _stream.Position = 0;
             _format = ImageFormat.Ico;
         }
 
@@ -68,7 +67,7 @@ namespace JJangdoImageUtil
         {
             ImageWrapperGeneral general = ToGeneral();
             ImageFormat format;
-            general._sourceImage = ImageConverter.ConvertToGif(general._sourceImage, general.Stream, out format);
+            general.SourceImage = ImageConverter.ConvertToGif(general.SourceImage, general.Stream, out format);
             general.Format = format;
             return general;
         }
@@ -77,7 +76,7 @@ namespace JJangdoImageUtil
         {
             ImageWrapperGeneral general = ToGeneral();
             ImageFormat format;
-            general._sourceImage = ImageConverter.ConvertToJpeg(general._sourceImage, general.Stream, out format);
+            general.SourceImage = ImageConverter.ConvertToJpeg(general.SourceImage, general.Stream, out format);
             general.Format = format;
             return general;
         }
@@ -92,7 +91,7 @@ namespace JJangdoImageUtil
         {
             ImageWrapperGeneral general = ToGeneral();
             ImageFormat format;
-            general._sourceImage = ImageConverter.ConvertToTiff(general._sourceImage, general.Stream, out format);
+            general.SourceImage = ImageConverter.ConvertToTiff(general.SourceImage, general.Stream, out format);
             general.Format = format;
             return general;
         }
@@ -101,7 +100,7 @@ namespace JJangdoImageUtil
         {
             ImageWrapperGeneral general = ToGeneral();
             ImageFormat format;
-            general._sourceImage = ImageConverter.ConvertToWebp(general._sourceImage, general.Stream, out format);
+            general.SourceImage = ImageConverter.ConvertToWebp(general.SourceImage, general.Stream, out format);
             general.Format = format;
             return general;
         }
@@ -110,14 +109,13 @@ namespace JJangdoImageUtil
         {
             ImageWrapperGeneral general = ToGeneral();
             ImageFormat format;
-            general._sourceImage = ImageConverter.ConvertToBmp(general._sourceImage, general.Stream, out format);
+            general.SourceImage = ImageConverter.ConvertToBmp(general.SourceImage, general.Stream, out format);
             general.Format = format;
             return general;
         }
 
         public override ImageWrapper ToIco()
         {
-            _stream.Position = 0;
             // 변경할 필요 없음
             return this;
         }
@@ -127,7 +125,6 @@ namespace JJangdoImageUtil
             _stream.Reset();
             _iconBitmap.RotateFlip(System.Drawing.RotateFlipType.Rotate90FlipNone);
             _iconBitmap.Save(_stream, System.Drawing.Imaging.ImageFormat.Png);
-            _stream.Position = 0;
         }
 
         public override void RotateCounterClockWise()
@@ -135,7 +132,6 @@ namespace JJangdoImageUtil
             _stream.Reset();
             _iconBitmap.RotateFlip(System.Drawing.RotateFlipType.Rotate270FlipNone);
             _iconBitmap.Save(_stream, System.Drawing.Imaging.ImageFormat.Png);
-            _stream.Position = 0;
         }
 
         public override void SetScale(float scaleX, float scaleY, bool keepAspectRatio)
@@ -192,7 +188,6 @@ namespace JJangdoImageUtil
             _stream.Reset();
             _iconBitmap = new Bitmap(_iconBitmap, width, height);
             _iconBitmap.Save(_stream, System.Drawing.Imaging.ImageFormat.Png);
-            _stream.Position = 0;
         }
 
         public override void SetWidth(int width, bool keepAspectRatio)

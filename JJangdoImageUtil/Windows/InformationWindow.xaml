@@ -28,9 +28,7 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <Button x:Name="Button_Close"
-                    Background="{Binding BackgroundColor}"
                     HorizontalAlignment="Right"
-                    Foreground="{Binding ForegroundColor}"
                     VerticalAlignment="Top"
                     Margin="0"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -38,11 +36,10 @@
                 <materialDesign:PackIcon Kind="Close" />
             </Button>
             <TextBlock Grid.Row="0"
-                       Foreground="{Binding ForegroundColor}"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"
-                       VerticalAlignment="Center"><Run Text="V" /><Run Text="ersion " /><Run Text="1." /><Run Language="ko-kr"
-                                                                                                              Text="1" /><Run Text=".0" /></TextBlock>
+                       VerticalAlignment="Center"><Run Text="V" /><Run Text="ersion " /><Run Text="1." /><Run Text="1" /><Run Text="." /><Run Language="ko-kr"
+                                                                                                                                              Text="1" /><LineBreak /><Run Language="ko-kr" /></TextBlock>
             <Button Grid.Row="1"
                     Foreground="Transparent"
                     Background="Transparent"
@@ -55,12 +52,10 @@
                      TextDecorations="Underline"></Run>
             </Button>
             <TextBlock Grid.Row="2"
-                       Foreground="{Binding ForegroundColor}"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"><Run Text="Made By : 윤정도" /></TextBlock>
             <TextBlock Grid.Row="3"
-                       Foreground="{Binding ForegroundColor}"
                        Text="Inspired By : 울 어머니"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"

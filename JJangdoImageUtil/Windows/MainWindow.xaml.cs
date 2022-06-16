@@ -43,6 +43,7 @@ namespace JJangdoImageUtil
             Photos.Dispatcher = Dispatcher;
             Photos.CollectionChanged += Photos_CollectionChanged;
 
+
             PhotosConsumer = new ObservableCollectionConsumer<Photo>(50, Photos, Dispatcher);
             PhotosConsumer.Start();
             App.Window = this;
@@ -57,6 +58,8 @@ namespace JJangdoImageUtil
             _circularProgress.SetColor(Brushes.LightSteelBlue);
             _circularProgress.SetScale(0.8);
 
+            // @참고 : https://stackoverflow.com/questions/4623882/mouseleftbuttondown-not-recognized-by-a-listbox
+            // 리스트 박스의 마우스 왼쪽 클릭 안되는 이유 : 리스트박스아이템이 이 이벤트를 처리하게 되어있기 때문에
             _photoListBox.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(_photoListBox_MouseLeftButtonDown), true);
             _photoListBox.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(_photoListBox_MouseLeftButtonUp), true);
 
@@ -65,10 +68,20 @@ namespace JJangdoImageUtil
 
         private void Photos_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (Photos.Count == 0)
-                _photoListEmptyPanel.Visibility = Visibility.Visible;
-            else
-                _photoListEmptyPanel.Visibility = Visibility.Hidden;
+            _photoListEmptyPanel.Visibility = Photos.Count == 0 ? Visibility.Visible : Visibility.Hidden;
+
+            Photo oldItem = e.OldItems != null && e.OldItems.Count > 0 ? e.OldItems[0] as Photo : null;
+            Photo newItem = e.NewItems != null && e.NewItems.Count > 0 ? e.NewItems[0] as Photo : null;
+
+            if (e.Action == NotifyCollectionChangedAction.Move)
+            {
+                if (e.OldItems.Count == 0 || e.NewItems.Count == 0)
+                    return;
+
+                
+
+
+            }
         }
 
         private void PhotosConsumer_OnEnqueueJob(object sender, EventArgs e)
@@ -215,7 +228,7 @@ namespace JJangdoImageUtil
 
             if (App.ImageDisplayWindow == null)
             {
-                App.ImageDisplayWindow = new ImageDisplayWindow(photo.BindedControl);
+                App.ImageDisplayWindow = new ImageDisplayWindow(photo);
                 App.ImageDisplayWindow.Show();
             }
         }
@@ -238,6 +251,7 @@ namespace JJangdoImageUtil
                 return;
 
             photo.SetImageControl(imgCtrl);
+            photo.Update();
         }
 
         private void _convertGifBtn_Click(object sender, RoutedEventArgs e)
@@ -505,6 +519,7 @@ namespace JJangdoImageUtil
                 return;
             }
 
+            
             Photo photo = _photoListBox.SelectedItem as Photo;
 
             if (photo == null || photo.BindedControl == null)
@@ -516,7 +531,7 @@ namespace JJangdoImageUtil
 
         private void _photoListBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_draggedPhoto != null && _onMousedPhoto != null)
+            if (_draggedPhoto != null && _onMousedPhoto != null && _photoListBox.SelectedItems.Count == 1)
             {
                 int draggedPhotoIdx = Photos.IndexOf(_draggedPhoto);
                 int onMousePhotoIdx = Photos.IndexOf(_onMousedPhoto);
@@ -539,6 +554,7 @@ namespace JJangdoImageUtil
                 return;
 
             _onMousedPhoto = photo;
+            Mouse.SetCursor(Cursors.Hand);
         }
     }
 }

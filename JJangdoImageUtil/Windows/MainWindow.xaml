@@ -53,14 +53,22 @@
                             BorderThickness="1">
                         <StackPanel>
                             <Image Stretch="Uniform">
+                                <!--
+                                비트맵 소스는 _photoListBox_OnLoaded에서 수동으로 지정해주도록 하자.
+                                여기서는 UriSource Binding 기능만 적용가능 ㅠㅠ
+                                StreamSource를 바인딩하고 싶은데 무조건 초기 이미지는 UriSource로만 생성가능하기때문
+                                원래 원본 파일을 바로 보여줘도 상관없는데 Exif Orientation 정보 추가땜에 이미지 회전 적용 후 보여주기위함.
+                                
+                                
                                 <Image.Source>
                                     <BitmapImage x:Name="_photoImageControl"
                                                  UriSource="{Binding Source}">
-
-                                        <!--DecodePixelWidth="200"-->
-                                        <!--RenderOptions.BitmapScalingMode="LowQuality"-->
                                     </BitmapImage>
                                 </Image.Source>
+                                -->
+
+                                <!--DecodePixelWidth="200"-->
+                                <!--RenderOptions.BitmapScalingMode="LowQuality"-->
                             </Image>
 
                             <TextBlock Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"
